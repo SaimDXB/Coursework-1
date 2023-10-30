@@ -1,54 +1,84 @@
-<html> <!-- Start of HTML document -->
-    <head> <!-- Head section of the HTML document -->
-        <title>Edventures</title> <!-- Title of the HTML document -->
-        <script src="https://unpkg.com/vue@2.7.8/dist/vue.js"></script> <!-- Import Vue.js library -->
-        <style>
-            /* Add CSS for flex layout */
-            .lesson {
-                display: flex; /* Use flexbox layout */
-                align-items: center; /* Center items vertically in the container */
-            }
-            .lesson img {
-                margin-left: 1px; /* Add left margin to the image */
-            }
-        </style> <!-- End of CSS styles -->
+<html>
+    <head>
+        <title>Edventures</title>
+        <script src="https://unpkg.com/vue@2.7.8/dist/vue.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
     </head>
-    <body> <!-- Body section of the HTML document -->
-        <div id="app"> <!-- Vue.js will control this div element -->
-            <header> <!-- Header section of the app -->
-                <h1 v-text="sitename"></h1> <!-- Display the site name using Vue.js text binding -->
+    
+    <body>
+        <div id="app">
+            <header>
+                <h1 v-text="sitename"></h1>
+                <button v-on:click='showCheckout'>
+                    {{ cartItemCount }}
+                    <span class="fas fa-cart-plus"></span> Checkout
+                </button>
             </header>
-            <main> <!-- Main section of the app -->
-                <!-- Wrap image and text in a div with class 'lesson' -->
-                <div class="lesson">
-                    <!-- Wrap text in a div -->
-                    <div class="text">
-                        <h2 v-text="lesson.subject"></h2> <!-- Display the lesson subject using Vue.js text binding -->
-                        <p v-text="lesson.location"></p>
-                        <p>Price: {{lesson.price}}</p>
-                        <p v-text ="lesson.space"></p> <!-- Display the lesson price using Vue.js interpolation -->
-                    </div>
-                    <figure> <!-- Figure element for displaying image -->
-                        <img v-bind:src="lesson.image"> <!-- Display the lesson image using Vue.js attribute binding -->
+
+            <main>
+                <div v-if="showProduct">
+                    <figure>
+                        <img v-bind:src="lesson.image">
                     </figure>
+                    <h2 v-text="lesson.subject"></h2>
+                    <p v-text="lesson.location"></p>
+                    <p>Price: {{lesson.price}}</p>
+                    <!-- Show available inventory here -->
+                    <p>Spaces: {{lesson.space}}</p>
+                    <!-- Hide the "Add to cart" button when addedToCart is true -->
+                    <button v-on:click="addToCart" v-if="canAddToCart && !addedToCart">
+                        Add to cart
+                    </button>
+                </div>
+                <div v-else>
+                    <h2>Your Cart</h2>
+                    <figure>
+                        <img v-bind:src="lesson.image">
+                    </figure>
+                    <h2 v-text="lesson.subject"></h2>
+                    <p v-text="lesson.location"></p>
+                    <p>Price: {{lesson.price}}</p>
                 </div>
             </main>
         </div>
 
-        <script type="text/javascript"> <!-- Start of JavaScript section -->
-            let afterSchoolClub = new Vue({ // The Vue instance
-                el: '#app', // The 'option object': DOM mounting point
-                data: { // Data object for storing reactive data
-                    sitename:'Edventures', // Site name data property
-                    lesson: { // Lesson object data property
-                        subject: "Subject: Math", // Subject data property
-                        location: "Location: London", // Location data property
-                        price: "£100", // Price data property
-                        space: "Spaces: 5",
-                        image: "calculator.png" // Image data property
+        <script type="text/javascript">
+            let afterSchoolClub = new Vue({
+                el: '#app',
+                data: {
+                    showProduct: true,
+                    sitename:'Edventures',
+                    lesson: {
+                        id: 1001,
+                        subject: "Subject: Math",
+                        location: "Location: London",
+                        price: "£100",
+                        space: 5,
+                        image: "calculator.png",
+                        availableInventory: 5,
+                    },
+                    cart: [],
+                    addedToCart: false, // New data property
+                },
+                computed: {
+                    cartItemCount: function() {
+                        return this.cart.length || '';
+                    },
+                    canAddToCart: function() {
+                        return this.lesson.space > this.cartItemCount;
+                    }
+                },
+                methods: {
+                    addToCart: function () {
+                        this.cart.push(this.lesson.id);
+                        this.lesson.space--;
+                        this.addedToCart = true; // Set addedToCart to true when the button is clicked
+                    },
+                    showCheckout() {
+                        this.showProduct = this.showProduct ? false : true;
                     }
                 }
             });
-        </script> <!-- End of JavaScript section -->
-    </body> <!-- End of body section -->
-</html> <!-- End of HTML document -->
+        </script>
+    </body>
+</html>
