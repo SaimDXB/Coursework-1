@@ -1,53 +1,84 @@
 <html>
     <head>
         <title>Vue.js Pet Depot</title>
-        <!-- Load Vue.js from a server (so no local file is needed) -->
         <script src="https://unpkg.com/vue@2.7.8/dist/vue.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
     </head>
+    
     <body>
         <div id="app">
             <header>
                 <h1 v-text="sitename"></h1>
+                <button v-on:click='showCheckout'>
+                    {{ cartItemCount }}
+                    <span class="fas fa-cart-plus"></span> Checkout
+                </button>
             </header>
-        <main>
-        <figure>
-            <!-- bind 'src' attr to 'product.image' in 'data' -->
-            <img v-bind:src="product.image">
-            </figure>
-            <h2 v-text="product.title"></h2>
-            <p v-html="product.description"></p>
-            <p>Price: {{product.price}}</p>
-            <button v-on:click="addToCart">Add to cart</button>
-                
-            
 
+            <main>
+                <div v-if="showProduct">
+                    <figure>
+                        <img v-bind:src="product.image">
+                    </figure>
+                    <h2 v-text="product.title"></h2>
+                    <p v-html="product.description"></p>
+                    <p>Price: {{product.price}}</p>
+                    <!-- Show available inventory here -->
+                    <p>Available Inventory: {{product.availableInventory}}</p>
+                    <button v-on:click="addToCart" v-if="canAddToCart">
+                        Add to cart
+                    </button>
+                    <button disabled='disabled' v-else>
+                        Add to cart
+                    </button>
+                </div>
+                <div v-else>
+                    <h2>Your Cart</h2>
+                    <figure>
+                        <img v-bind:src="product.image">
+                    </figure>
+                    <h2 v-text="product.title"></h2>
+                    <p v-html="product.description"></p>
+                    <p>Price: {{product.price}}</p>
+                </div>
+            </main>
+        </div>
 
-        </main>
-        
-    </div>
-        <!-- The element where Vue will mount -->
-        <div id="app"></div>
         <script type="text/javascript">
-            let webstore = new Vue({ // The Vue instance
-                el: '#app', // The 'option object': DOM mounting point
+            let webstore = new Vue({
+                el: '#app',
                 data: {
+                    showProduct: true,
                     sitename:'Vue.js Pet_Depot',
                     product: {
                         id: 1001,
                         title: "Cat Food, 25lb bag",
                         description: "A 25 pound bag of <em>irresistible</em>," + "organic goodness for your cat.",
-                        price: 23432422340,
-                        image: "product-fullsize.jpeg"
+                        price: 2000,
+                        image: "product-fullsize.jpeg",
+                        availableInventory: 5,
                     },
-                    cart: []
+                    cart: [],
+                },
+                computed: {
+                    cartItemCount: function() {
+                        return this.cart.length || '';
+                    },
+                    canAddToCart: function() {
+                        return this.product.availableInventory > this.cartItemCount;
+                    }
                 },
                 methods: {
                     addToCart: function () {
-                        this.cart.push(this.product.id)
-                        //console.log(this.cart)
+                        this.cart.push(this.product.id);
+                        this.product.availableInventory--;
+                        this.showProduct = false;
                     },
-                },
+                    showCheckout() {
+                        this.showProduct = this.showProduct ? false : true;
+                    }
+                }
             });
-        </script>ewrwerewrewrewr
+        </script>
     </body>
 </html>
