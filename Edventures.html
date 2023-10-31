@@ -1,74 +1,74 @@
-<!DOCTYPE html>
+<!DOCTYPE html> <!-- Defines the document type -->
 <html>
 <head>
-    <title>Edventures</title>
-    <script src="https://unpkg.com/vue@2.7.8/dist/vue.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <title>Edventures</title> <!-- The title of the webpage -->
+    <script src="https://unpkg.com/vue@2.7.8/dist/vue.js"></script> <!-- Importing Vue.js library -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"> <!-- Importing Font Awesome for icons -->
     <style>
-
         body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
+            font-family: Arial, sans-serif; /* Sets the font of the body text to Arial */
+            margin: 0; /* Removes the default margin around the body */
+            padding: 0; /* Removes the default padding around the body */
         }
-
+    
         header {
-            background-color: #060b9b;
-            color: white;
-            padding: 10px 0;
-            text-align: center;
+            background-color: #060b9b; /* Sets the background color of the header to a shade of blue */
+            color: white; /* Sets the text color in the header to white */
+            padding: 10px 0; /* Adds 10px of padding to the top and bottom of the header */
+            text-align: center; /* Centers the text in the header */
         }
-
+    
         main {
-            padding: 20px;
+            padding: 20px; /* Adds 20px of padding around the main content area */
         }
-
+    
         .lesson-container {
             margin-bottom: 20px;
             padding: 20px;
             border: 1px solid #ddd;
             background-color: #f9f9f9;
         }
-
+    
         .lesson-image {
             width: 100px;
             height: 100px;
             object-fit: cover;
         }
-
+    
         .cart-item {
-            display: flex;
-            align-items: center;
+            display: flex; /* Makes each cart item a flex container, which allows for flexible layouts */
+            align-items: center; /* Vertically centers the contents of each cart item */
             margin-bottom: 10px;
         }
-
+    
         .cart-item img {
             width: 50px;
             height: 50px;
-            object-fit: cover;
-            margin-right: 10px;
+            object-fit: cover; /* Scales and crops the images to fit their dimensions */
+            margin-right: 10px; /* Adds 10px of margin to the right of each cart item image */
         }
-
+    
         button {
-            background-color: #0f1cc9;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            cursor: pointer;
+            background-color: #0f1cc9; /* Sets the background color of buttons to a shade of blue */
+            color: white; /* Sets the text color in buttons to white */
+            border: none; /* Removes borders from buttons */
+            padding: 10px 20px; /* Adds padding inside buttons (10px vertical, 20px horizontal) */
+            cursor: pointer; /* Changes the cursor to a pointer when hovering over buttons */
         }
-
+    
         button:disabled {
-            background-color: #ccc;
+            background-color: #ccc; /* Changes the background color of disabled buttons to a light gray */
         }
     </style>
+    
 </head>
 
 <body>
-    <div id="app">
+    <div id="app"> <!-- Vue.js app starts here -->
         <header>
-            <h1 v-text="sitename"></h1>
-            <button v-on:click='showCheckout'>
-                {{ cartItemCount }}
+            <h1 v-text="sitename"></h1> <!-- Display the site name -->
+            <button v-on:click='showCheckout'> <!-- Button to show the checkout page -->
+                {{ cartItemCount }} <!-- Display the number of items in the cart -->
                 <span class="fas fa-cart-plus"></span> Checkout
             </button>
         </header>
@@ -77,12 +77,12 @@
             <!-- Display each lesson using v-for directive -->
             <div class="lesson-container" v-for="(lesson, index) in lessons" v-if="showProduct">
                 <figure>
-                    <img class="lesson-image" v-bind:src="lesson.image">
+                    <img class="lesson-image" v-bind:src="lesson.image"> <!-- Display the lesson image -->
                 </figure>
-                <h2 v-text="lesson.subject"></h2>
-                <p v-text="lesson.location"></p>
-                <p>Price: {{lesson.price}}</p>
-                <p>Spaces: {{lesson.space}}</p>
+                <h2 v-text="lesson.subject"></h2> <!-- Display the lesson subject -->
+                <p v-text="lesson.location"></p> <!-- Display the lesson location -->
+                <p>Price: {{lesson.price}}</p> <!-- Display the lesson price -->
+                <p>Spaces: {{lesson.space}}</p> <!-- Display the available spaces for the lesson -->
                 <!-- Button to add the lesson to the cart -->
                 <button v-on:click="addToCart(lesson)" v-if="canAddToCart(lesson) && !lesson.addedToCart">
                     Add to cart
@@ -93,12 +93,12 @@
             <div v-if="!showProduct">
                 <div class="cart-item" v-for="item in cart">
                     <figure>
-                        <img class="lesson-image" v-bind:src="item.image">
+                        <img class="lesson-image" v-bind:src="item.image"> <!-- Display the item image -->
                     </figure>
                     <div>
-                        <h2 v-text="item.subject"></h2>
-                        <p v-text="item.location"></p>
-                        <p>Price: {{item.price}}</p>
+                        <h2 v-text="item.subject"></h2> <!-- Display the item subject -->
+                        <p v-text="item.location"></p> <!-- Display the item location -->
+                        <p>Price: {{item.price}}</p> <!-- Display the item price -->
                     </div>
                 </div>
             </div>
@@ -106,20 +106,20 @@
     </div>
 
     <script type="text/javascript">
-        let afterSchoolClub = new Vue({
-            el: '#app',
-            data: {
-                showProduct: true,
-                sitename: 'Edventures',
+        let afterSchoolClub = new Vue({ // Create a new Vue.js instance
+            el: '#app', // The element that this Vue.js instance will control
+            data: { // The data object for this Vue.js instance
+                showProduct: true, // Boolean to control whether to show products or checkout page
+                sitename: 'Edventures', // The site name
                 lessons: [
-                    {
-                        id: 1001,
-                        subject: "Math",
-                        location: "London",
-                        price: "£100",
-                        space: 5,
+                {
+                        id: 1001, // Unique identifier for the lesson
+                        subject: "Math",// The subject of the lesson
+                        location: "London", //location
+                        price: "£100", //price of lesson
+                        space: 5, //spaces in the lesson
                         image: "calculator.png",
-                        addedToCart: false,
+                        addedToCart: false, //boolean to indicate if the lesson has been added to the cart intially set to false
                     },
                     {
                         id: 1002,
@@ -165,27 +165,27 @@
                         space :5,
                         image:"computer.png",
                         addedToCart:false
-                    }/* Lessons array */
-                    ],
-                cart: [],
+                    }
+                ], // The array of lessons
+                cart: [], // The shopping cart array
             },
-            computed: {
-                cartItemCount: function() {
+            computed: { // Computed properties for this Vue.js instance
+                cartItemCount: function() { // Compute the number of items in the cart
                     return this.cart.length || '';
                 }
             },
-            methods: {
-                addToCart: function(lesson) {
+            methods: { // Methods for this Vue.js instance
+                addToCart: function(lesson) { // Method to add a lesson to the cart
                     if (!lesson.addedToCart) {
                         this.cart.push(lesson);
                         lesson.space--;
                         lesson.addedToCart = true;
                     }
                 },
-                canAddToCart: function(lesson) {
+                canAddToCart: function(lesson) { // Method to check if a lesson can be added to the cart
                     return lesson.space > 0;
                 },
-                showCheckout: function() {
+                showCheckout: function() { // Method to toggle between showing products and checkout page
                     this.showProduct = this.showProduct ? false : true;
                 }
             }
