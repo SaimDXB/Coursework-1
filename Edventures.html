@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edventures</title>
+    <script src="https://unpkg.com/vue@2.7.8/dist/vue.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 0;
+            text-align: center;
+        }
+
+        main {
+            padding: 20px;
+        }
+
+        .lesson-container {
+            margin-bottom: 20px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            background-color: #f9f9f9;
+        }
+
+        .lesson-image {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+        }
+
+        .cart-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .cart-item img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            margin-right: 10px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+
+        button:disabled {
+            background-color: #ccc;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <header>
+            <h1 v-text="sitename"></h1>
+            <button v-on:click='showCheckout'>
+                {{ cartItemCount }}
+                <span class="fas fa-cart-plus"></span> Checkout
+            </button>
+        </header>
+
+        <main>
+            <div class="lesson-container" v-for="(lesson, index) in lessons" v-if="showProduct">
+                <figure>
+                    <img class="lesson-image" v-bind:src="lesson.image">
+                </figure>
+                <h2 v-text="lesson.subject"></h2>
+                <p v-text="lesson.location"></p>
+                <p>Price: {{lesson.price}}</p>
+                <p>Spaces: {{lesson.space}}</p>
+                <button v-on:click="addToCart(lesson)" v-if="canAddToCart(lesson) && !lesson.addedToCart">
+                    Add to cart
+                </button>
+            </div>
+            <div class="cart-item" v-for="item in cart">
+                <figure>
+                    <img class="lesson-image" v-bind:src="item.image">
+                </figure>
+                <div>
+                    <h2 v-text="item.subject"></h2>
+                    <p v-text="item.location"></p>
+                    <p>Price: {{item.price}}</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script type="text/javascript">
+        let afterSchoolClub = new Vue({
+            el: '#app',
+            data: {
+                showProduct: true,
+                sitename: 'Edventures',
+                lessons: [ // Lessons array
+                        {
+                            id: 1001,
+                            subject: "Math",
+                            location: "London",
+                            price: "£100",
+                            space: 5,
+                            image: "calculator.png",
+                            addedToCart: false,
+                        },
+                        {
+                            id: 1002,
+                            subject: "English",
+                            location: "London",
+                            price: "£90",
+                            space: 5,
+                            image: "book.png",
+                            addedToCart: false,
+                        },
+                        {
+                            id: 1003,
+                            subject: "Chemistry",
+                            location: "London",
+                            price: "£110",
+                            space: 5,
+                            image: "flask.png",
+                            addedToCart: false,
+                        },
+                        {
+                            id: 1004,
+                            subject: "Physics",
+                            location: "London",
+                            price: "£105",
+                            space: 5,
+                            image: "atom.png",
+                            addedToCart: false,
+                        },
+                        {
+                            id :1005,
+                            subject:"Biology",
+                            location:"London",
+                            price:"£95",
+                            space :5,
+                            image:"dna.png",
+                            addedToCart:false
+                        },
+                        {
+                            id :1006,
+                            subject:"Computer Science",
+                            location:"London",
+                            price:"£120",
+                            space :5,
+                            image:"computer.png",
+                            addedToCart:false
+                        }
+                    ],
+                cart: [],
+            },
+            computed: {
+                cartItemCount: function() {
+                    return this.cart.length || '';
+                }
+            },
+            methods: {
+                addToCart: function(lesson) {
+                    if (!lesson.addedToCart) {
+                        this.cart.push(lesson);
+                        lesson.space--;
+                        lesson.addedToCart = true;
+                    }
+                },
+                canAddToCart: function(lesson) {
+                    return lesson.space > 0;
+                },
+                showCheckout: function() {
+                    this.showProduct = this.showProduct ? false : true;
+                }
+            }
+        });
+    </script>
+</body>
+</html>
