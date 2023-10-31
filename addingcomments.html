@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edventures</title> <!-- The title of the webpage -->
+    <script src="https://unpkg.com/vue@2.7.8/dist/vue.js"></script> <!-- Importing Vue.js library -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"> <!-- Importing Font Awesome for icons -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #060b9b;
+            color: white;
+            padding: 10px 0;
+            text-align: center;
+        }
+
+        main {
+            padding: 20px;
+        }
+
+        .lesson-container {
+            margin-bottom: 20px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            background-color: #f9f9f9;
+        }
+
+        .lesson-image {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+        }
+
+        .cart-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .cart-item img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            margin-right: 10px;
+        }
+
+        button {
+            background-color: #0f1cc9;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+
+        button:disabled {
+            background-color: #ccc;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app"> <!-- Vue.js app starts here -->
+        <header>
+            <h1 v-text="sitename"></h1> <!-- Display the site name -->
+            <button v-on:click='showCheckout'> <!-- Button to show the checkout page -->
+                {{ cartItemCount }} <!-- Display the number of items in the cart -->
+                <span class="fas fa-cart-plus"></span> Checkout
+            </button>
+        </header>
+
+        <main>
+                <!-- Display each lesson using v-for directive -->
+                <div class="lesson-container" v-for="(lesson, index) in lessons" v-if="showProduct">
+                    <!-- Lesson details and Add to cart button here -->
+                <figure>
+                    <img class="lesson-image" v-bind:src="lesson.image"> <!-- Display the lesson image -->
+                </figure>
+                <h2 v-text="lesson.subject"></h2> <!-- Display the lesson subject -->
+                <p v-text="lesson.location"></p> <!-- Display the lesson location -->
+                <p>Price: {{lesson.price}}</p> <!-- Display the lesson price -->
+                <p>Spaces: {{lesson.space}}</p> <!-- Display the available spaces for the lesson -->
+                <!-- Button to add the lesson to the cart -->
+                <button v-on:click="addToCart(lesson)" v-if="canAddToCart(lesson) && !lesson.addedToCart">
+                    Add to cart
+                </button>
+            </div>
+            <!-- Display each item in the cart -->
+                <!-- Display each item in the cart -->
+                <div v-if="!showProduct">
+                    <div class="cart-item" v-for="item in cart">
+                        <!-- Cart item details here -->
+                <figure>
+                    <img class="lesson-image" v-bind:src="item.image"> <!-- Display the item image -->
+                </figure>
+                <div>
+                    <h2 v-text="item.subject"></h2> <!-- Display the item subject -->
+                    <p v-text="item.location"></p> <!-- Display the item location -->
+                    <p>Price: {{item.price}}</p> <!-- Display the item price -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script type="text/javascript">
+        let afterSchoolClub = new Vue({ // Create a new Vue.js instance
+            el: '#app', // The element that this Vue.js instance will control
+            data: { // The data object for this Vue.js instance
+                showProduct: true, // Boolean to control whether to show products or checkout page
+                sitename: 'Edventures', // The site name
+                lessons: [ // Lessons array
+                    {
+                        id: 1001,
+                        subject: "Math",
+                        location: "London",
+                        price: "£100",
+                        space: 5,
+                        image: "calculator.png",
+                        addedToCart: false,
+                    },
+                    {
+                        id: 1002,
+                        subject: "English",
+                        location: "London",
+                        price: "£90",
+                        space: 5,
+                        image: "book.png",
+                        addedToCart: false,
+                    },
+                    {
+                        id: 1003,
+                        subject: "Chemistry",
+                        location: "London",
+                        price: "£110",
+                        space: 5,
+                        image: "flask.png",
+                        addedToCart: false,
+                    },
+                    {
+                        id: 1004,
+                        subject: "Physics",
+                        location: "London",
+                        price: "£105",
+                        space: 5,
+                        image: "atom.png",
+                        addedToCart: false,
+                    },
+                    {
+                        id :1005,
+                        subject:"Biology",
+                        location:"London",
+                        price:"£95",
+                        space :5,
+                        image:"dna.png",
+                        addedToCart:false
+                    },
+                    {
+                        id :1006,
+                        subject:"Computer Science",
+                        location:"London",
+                        price:"£120",
+                        space :5,
+                        image:"computer.png",
+                        addedToCart:false
+                    }/* Lessons array */
+             ], // The array of lessons
+                cart: [], // The shopping cart array
+            },
+            computed: { // Computed properties for this Vue.js instance
+                cartItemCount: function() { // Compute the number of items in the cart
+                    return this.cart.length || '';
+                }
+            },
+            methods: { // Methods for this Vue.js instance
+                addToCart: function(lesson) { // Method to add a lesson to the cart
+                    if (!lesson.addedToCart) {
+                        this.cart.push(lesson);
+                        lesson.space--;
+                        lesson.addedToCart = true;
+                    }
+                },
+                canAddToCart: function(lesson) { // Method to check if a lesson can be added to the cart
+                    return lesson.space > 0;
+                },
+                showCheckout: function() { // Method to toggle between showing products and checkout page
+                    this.showProduct = this.showProduct ? false : true;
+                }
+            }
+        });
+    </script>
+
+</body>
+
+</html>
