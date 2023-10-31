@@ -5,6 +5,7 @@
     <script src="https://unpkg.com/vue@2.7.8/dist/vue.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
     <style>
+
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -61,6 +62,7 @@
         }
     </style>
 </head>
+
 <body>
     <div id="app">
         <header>
@@ -72,6 +74,7 @@
         </header>
 
         <main>
+            <!-- Display each lesson using v-for directive -->
             <div class="lesson-container" v-for="(lesson, index) in lessons" v-if="showProduct">
                 <figure>
                     <img class="lesson-image" v-bind:src="lesson.image">
@@ -80,18 +83,23 @@
                 <p v-text="lesson.location"></p>
                 <p>Price: {{lesson.price}}</p>
                 <p>Spaces: {{lesson.space}}</p>
+                <!-- Button to add the lesson to the cart -->
                 <button v-on:click="addToCart(lesson)" v-if="canAddToCart(lesson) && !lesson.addedToCart">
                     Add to cart
                 </button>
             </div>
-            <div class="cart-item" v-for="item in cart">
-                <figure>
-                    <img class="lesson-image" v-bind:src="item.image">
-                </figure>
-                <div>
-                    <h2 v-text="item.subject"></h2>
-                    <p v-text="item.location"></p>
-                    <p>Price: {{item.price}}</p>
+
+            <!-- Display each item in the cart -->
+            <div v-if="!showProduct">
+                <div class="cart-item" v-for="item in cart">
+                    <figure>
+                        <img class="lesson-image" v-bind:src="item.image">
+                    </figure>
+                    <div>
+                        <h2 v-text="item.subject"></h2>
+                        <p v-text="item.location"></p>
+                        <p>Price: {{item.price}}</p>
+                    </div>
                 </div>
             </div>
         </main>
@@ -103,61 +111,61 @@
             data: {
                 showProduct: true,
                 sitename: 'Edventures',
-                lessons: [ // Lessons array
-                        {
-                            id: 1001,
-                            subject: "Math",
-                            location: "London",
-                            price: "£100",
-                            space: 5,
-                            image: "calculator.png",
-                            addedToCart: false,
-                        },
-                        {
-                            id: 1002,
-                            subject: "English",
-                            location: "London",
-                            price: "£90",
-                            space: 5,
-                            image: "book.png",
-                            addedToCart: false,
-                        },
-                        {
-                            id: 1003,
-                            subject: "Chemistry",
-                            location: "London",
-                            price: "£110",
-                            space: 5,
-                            image: "flask.png",
-                            addedToCart: false,
-                        },
-                        {
-                            id: 1004,
-                            subject: "Physics",
-                            location: "London",
-                            price: "£105",
-                            space: 5,
-                            image: "atom.png",
-                            addedToCart: false,
-                        },
-                        {
-                            id :1005,
-                            subject:"Biology",
-                            location:"London",
-                            price:"£95",
-                            space :5,
-                            image:"dna.png",
-                            addedToCart:false
-                        },
-                        {
-                            id :1006,
-                            subject:"Computer Science",
-                            location:"London",
-                            price:"£120",
-                            space :5,
-                            image:"computer.png",
-                            addedToCart:false
-                        }
+                lessons: [
+                    {
+                        id: 1001,
+                        subject: "Math",
+                        location: "London",
+                        price: "£100",
+                        space: 5,
+                        image: "calculator.png",
+                        addedToCart: false,
+                    },
+                    {
+                        id: 1002,
+                        subject: "English",
+                        location: "London",
+                        price: "£90",
+                        space: 5,
+                        image: "book.png",
+                        addedToCart: false,
+                    },
+                    {
+                        id: 1003,
+                        subject: "Chemistry",
+                        location: "London",
+                        price: "£110",
+                        space: 5,
+                        image: "flask.png",
+                        addedToCart: false,
+                    },
+                    {
+                        id: 1004,
+                        subject: "Physics",
+                        location: "London",
+                        price: "£105",
+                        space: 5,
+                        image: "atom.png",
+                        addedToCart: false,
+                    },
+                    {
+                        id :1005,
+                        subject:"Biology",
+                        location:"London",
+                        price:"£95",
+                        space :5,
+                        image:"dna.png",
+                        addedToCart:false
+                    },
+                    {
+                        id :1006,
+                        subject:"Computer Science",
+                        location:"London",
+                        price:"£120",
+                        space :5,
+                        image:"computer.png",
+                        addedToCart:false
+                    }/* Lessons array */
                     ],
                 cart: [],
             },
@@ -183,5 +191,7 @@
             }
         });
     </script>
+
 </body>
+
 </html>
