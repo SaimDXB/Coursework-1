@@ -1,229 +1,184 @@
-<html>
-    <head>
-        <title>Vue.js Pet Depot</title>
-
-        <script src="https://cdn.jsdelivr.net/npm/vue@2.7.14/dist/vue.js"></script>
-        <script src="products.js"></script>
-        <link rel="stylesheet"
-        href="https://use.fontawesome.com/releases/v5.15.4/css/all.css">    <!--CDN link for font awesome-->
-
-    <body>
-        <div id="app">
-            <header>
-            <h1>{{ sitename }} </h1>
-            <button v-on:click="showCheckout">
-                {{ cartItemCount }}
-                <span class="fas fa-cart-plus"></span> Checkout <!--script for icon-->
-            </button>
-        </header>
-
-            <main>
-                <!--Product Page-->
-                <div v-if="showProduct">
-                    <div v-for="product in products">
-                        <div v-for="product in sortedProducts"></div>
-                        <figure>
-                            <img v-bind:src="product.image" width="250" height="250">
-                        </figure>
-                        <h2 v-text="product.title"></h2>
-                        <p v-html="product.description"></p>
-                        <p>Price: {{product.price}}</p>
-                        <p>Inventory: {{product.stock -cartCount(product.id)}}</p>
-                        <button
-                            v-on:click="addToCart(product)" v-if="canAddToCart(product)">
-                                Add to cart
-                        </button>
-                        <button disabled="disabled" v-else>N/A
-                        </button>
-                        <span v-if="product.availableInventory === cartCount(product.id)">
-                            All Out!
-                        </span>
-                        <span v-else-if="product.availableInventory - cartCount(product.id) < 5">
-                            only {{product.availableInventory - cartCount(product.id)}} Left!!
-                        </span>
-                        <span v-else>
-                            BUY NOW!!
-                        </span>
-                        <div>
-                            <span v-for="n in product.rating">★</span>
-                            <span v-for="n in 5-product.rating">☆</span>
-                        </div>
-                    </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Edventures</title>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .lesson-container {
+            border: 1px solid #ccc;
+            margin-bottom: 10px;
+            padding: 10px;
+        }
+        .form-container {
+            margin-top: 20px;
+        }
+        .rating {
+            direction: rtl;
+        }
+        .rating a {
+            font-size: 1.5em;
+            color: #aaa;
+            text-decoration: none;
+        }
+        .rating a:hover,
+        .rating a:hover ~ a,
+        .rating a.active,
+        .rating a.active ~ a {
+            color: #fde16d;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.7.14/dist/vue.js"></script>
+    <script src="lessons.js"></script>
+</head>
+<body>
+    <div id="app">
+        <h1>Edventures</h1>
+        <!-- Display List of Lessons -->
+        <div v-if="showProduct">
+            <!-- Sort Functionality -->
+            <div>
+                Sort by:
+                <select v-model="sortAttribute">
+                    <option value="">Select</option>
+                    <option value="subject">Subject</option>
+                    <option value="location">Location</option>
+                    <option value="price">Price</option>
+                    <option value="spaces">Spaces</option>
+                </select>
+                Order:
+                <select v-model="sortOrder">
+                    <option value="">Select</option>
+                    <option value="asc">Ascending</option>
+                    <option value="desc">Descending</option>
+                </select>
+                <!-- Search Functionality -->
+                Search:
+                <input v-model="searchQuery" placeholder="Search lessons..." />
+            </div>
+            <!-- Lessons List -->
+            <div class="lesson-container" v-for="(lesson, index) in filteredAndSortedLessons">
+                <!-- Lesson Details -->
+                <h2>{{ lesson.subject }}</h2>
+                <p>Location: {{ lesson.location }}</p>
+                <p>Price: {{ lesson.price }}</p>
+                <p>Spaces: {{ lesson.spaces }}</p>
+                <!-- Add to Cart Functionality -->
+                <button v-on:click="addToCart(lesson)" v-if="lesson.spaces > 0">
+                    Add to cart
+                </button>
+                <p v-else>Oh no, we're all out of spaces at the moment. Please check back later.</p>
+                <!-- Rating System -->
+                <div class="rating">
+                    <a href="#" v-on:click.prevent="rate(lesson, 5)" v-bind:class="{ active: lesson.rating >= 5 }">★</a>
+                    <a href="#" v-on:click.prevent="rate(lesson, 4)" v-bind:class="{ active: lesson.rating >= 4 }">★</a>
+                    <a href="#" v-on:click.prevent="rate(lesson, 3)" v-bind:class="{ active: lesson.rating >= 3 }">★</a>
+                    <a href="#" v-on:click.prevent="rate(lesson, 2)" v-bind:class="{ active: lesson.rating >= 2 }">★</a>
+                    <a href="#" v-on:click.prevent="rate(lesson, 1)" v-bind:class="{ active: lesson.rating >= 1 }">★</a>
                 </div>
-
-                <!--Checkout Page-->
-                <div v-else>
-                    <h2>Checkout</h2>
-                    <p>
-                        <strong>First Name:</strong>
-                        <!--Input Field will bound to 'firstName' in the 'order' object-->
-                        <input v-model.trim="order.firstName"/>
-                    </p>
-                    <p>
-                        <strong>Last Name:</strong>
-                        <!--Input Field will bound to 'firstName' in the 'order' object-->
-                        <input v-model.trim="order.lastName"/>
-                    </p>
-                    <p>
-                        <strong>Address:</strong>
-                        <!--Input Field will bound to 'address' in the 'order' object-->
-                        <input v-model="order.address"/>
-                    </p>
-                    <p>
-                        <strong>City:</strong>
-                        <!--Input Field will bound to 'city' in the 'order' object-->
-                        <input v-model="order.city"/>
-                    </p>
-                    <p>
-                        <strong>Province:</strong>
-                        <!--Input Field will bound to 'firstName' in the 'order' object-->
-                        <select v-model="order.province">
-                            <option disabled value="">Province</option>
-                            <option v-for="(province, key) in provinces"
-                                v-bind:value="province">
-                                {{key}}
-                            </option>
-
-                            <!-- <option v-bind:value="province.AB">AB</option>
-                            <option v-bind:value="province.SK">SK</option>
-                            <option v-bind:value="province.BC">BC</option>
-                            <option v-bind:value="province.ON">ON</option> -->
-                        </select>
-                    </p>
-                    <p>
-                        <strong>Zip/Postal Code:</strong>
-                        <input v-model.number="order.zip" type="number"/>
-
-                    </p>
-
-                    <p><input type="checkbox" id="gift" value="true" v-model="order.gift"
-                        v-bind:true-value="order.sendGift"
-                        v-bind:false-value="order.dontSendGift">
-                        <label for="gift"> Ship As Gift?</label>
-                        
-                    </p>
-                    <p>
-                        <input type="radio" id="home" value="Home" v-model="order.method">
-                        <label for="home"> Home </label>
-                        <input type="radio" id="business" value="Business" v-model="order.method">
-                        <label for="business"> Business </label>
-                    </p>
-
-                    <h2>Order Information</h2>
-                    <p>First Name: {{order.firstName}}</p>
-                    <p>Last Name: {{order.lastName}}</p>
-                    <p>Address: {{order.address}}</p>
-                    <p>City: {{order.city}}</p>
-                    <p>Province: {{order.province}}</p>
-                    <p>Zip/Postal Code: {{order.zip}}</p>
-                    <p>Gift? {{order.gift}}</p>
-                    <p>Method: {{order.method}}</p>
-                    <button v-on:click="submitForm"> Place Order </button>
-                </div>
-            </main>
+            </div>
         </div>
-
-        <script type="text/javascript">
-            let webstore = new Vue({
-                el:'#app',
-
-                data:{
-                    sitename: 'Vue.js Pet Depot',
-                    showProduct: true,
-                    order: {
-                        firstName: '',
-                        lastName: '',
-                        address:'',
-                        city:'',
-                        province:'',
-                        zip:'',
-                        method: 'Home',
-                        gift: false,
-                        sendGift:"Send as a Gift",
-                        dontSendGift:"Don't send as a gift",
-                        
-                    },
-
-                    provinces: {
-                            AB: 'Alberta',
-                            SK: 'Saskachewan',
-                            BC: 'British Columbia',
-                            ON: 'Ontario'
-                        },
-
-                    // product:{ //product information of the cat food.
-                    //     id: 1001,
-                    //     title:"Cat Food, 25lb bag",
-                    //     description:"A 25 Pound bag of <em> irresisitible </em>,"+" organic goodness for your cat.",
-                    //     price: 2000,
-                    //     image:"catfood.jpg",
-                    //     stock: 10,
-                    //     availableInventory: 10,
-                    //     showProduct: true,
-                    //     rating: 1
-                    // },
-                    products: products,
-                    cart:[], //array to store items in shopping cart.
+        <!-- Shopping Cart and Checkout Functionality -->
+        <div v-else>
+            <!-- Shopping Cart -->
+            <div class="cart-item" v-for="(lessonId, index) in cart">
+                <div v-if="lesson = lessons.find(lesson => lesson.id === lessonId)">
+                    <!-- Lesson Details -->
+                    <h2>{{ lesson.subject }}</h2>
+                    <p>Location: {{ lesson.location }}</p>
+                    <p>Price: {{ lesson.price }}</p>
+                    <!-- Remove from Cart Functionality -->
+                    <button v-on:click="removeFromCart(lessonId)">
+                        Remove from cart
+                    </button>
+                </div>
+            </div>
+            <!-- Checkout Form -->
+            <div class="form-container">
+                <h2>Checkout</h2>
+                <p><strong>Name:</strong> <input v-model.trim="order.name" /></p>
+                <p><strong>Phone Number:</strong> <input v-model.trim="order.phone" /></p>
+                <button v-show="isValidName && isValidPhone" v-on:click="submitOrder">
+                    Place Order
+                </button>
+            </div>
+        </div>
+        <!-- Checkout Button -->
+        <button v-on:click="showProduct = !showProduct">
+            <i class="fas fa-shopping-cart"></i> Checkout ({{ cart.length }})
+        </button>
+    </div>
+    <script type="text/javascript">
+        let app = new Vue({
+            el: '#app',
+            data: {
+                showProduct: true,
+                order: {
+                    name: '',
+                    phone: ''
                 },
-
-                methods: {
-                    addToCart (product) {
-                        this.cart.push(product.id);    //console.log(this.cart)
-                        //this.product.stock--;
-                    },
-
-                    
-
-                    showCheckout(){
-                        this.showProduct = this.showProduct ? false : true;
-                    },
-
-                    submitForm(){
-                        {alert('Order Submitted! :D')}
-                    },
-
-                    canAddToCart(product){
-                        return product.availableInventory > this.cartCount(product.id);
-                    },
-                                        
-                    cartCount(id) {
-                        let count = 0;
-                        for (let i = 0; i < this.cart.length; i++) {
-                            if (this.cart[i] === id) {
-                                count++;
-                            }
-                        }
-                        return count;
-                    },
-
+                lessons: lessons,
+                cart: [],
+                sortAttribute: '',
+                sortOrder: '',
+                searchQuery: ''
+            },
+            computed: {
+                isValidName: function () {
+                    return /^[A-Za-z]*$/.test(this.order.name);
                 },
-
-                computed: { // the Computed Property object
-                    cartItemCount: function() { //the property name
-                        // its value is calculated when it is called
-                        return this.cart.length || '';
-                    },
-                    sortedProducts() {
-                        let productsArray = this.products.slice(0);
-                        function compare (a, b) {
-                            if (a.price > b.price)
-                                return 1;
-                            if (a.price < b.price)
-                                return -1;
-                            return 0;
-                        }
-                        return productsArray.sort(compare);
+                isValidPhone: function () {
+                    return /^[0-9]*$/.test(this.order.phone);
+                },
+                filteredAndSortedLessons: function () {
+                    let lessonsArray = this.lessons;
+                    if (this.searchQuery) {
+                        let lowerCaseQuery = this.searchQuery.toLowerCase();
+                        lessonsArray = lessonsArray.filter(lesson => lesson.subject.toLowerCase().includes(lowerCaseQuery) || lesson.location.toLowerCase().includes(lowerCaseQuery));
                     }
-                    
-
-                    // canAddToCart: function() {
-                    //     return this.product.availableInventory > this.cartItemCount;
-                    // },
+                    if (this.sortAttribute) {
+                        if (this.sortOrder === 'asc') {
+                            return lessonsArray.sort((a, b) => a[this.sortAttribute] > b[this.sortAttribute] ? 1 : -1);
+                        } else if (this.sortOrder === 'desc') {
+                            return lessonsArray.sort((a, b) => a[this.sortAttribute] > b[this.sortAttribute] ? -1 : 1);
+                        }
+                    }
+                    return lessonsArray;
+                }
+            },
+            methods: {
+                addToCart: function (lesson) {
+                    this.cart.push(lesson.id);
+                    lesson.spaces--;
                 },
-
-            });
-
-        </script>
-
-    </body>
+                removeFromCart: function (lessonId) {
+                    const index = this.cart.indexOf(lessonId);
+                    if (index > -1) {
+                        this.cart.splice(index, 1);
+                        this.lessons.find(lesson => lesson.id === lessonId).spaces++;
+                    }
+                },
+                submitOrder: function () {
+                    if (this.isValidName && this.isValidPhone) {
+                        alert('Order submitted!');
+                        this.cart = [];
+                        for (let lesson of this.lessons) {
+                            lesson.spaces = 5;
+                        }
+                        this.showProduct = true;
+                        this.order = {
+                            name: '',
+                            phone: ''
+                        };
+                    }
+                },
+                rate: function (lesson, rating) {
+                    lesson.rating = rating;
+                }
+            }
+        });
+    </script>
+</body>
 </html>
