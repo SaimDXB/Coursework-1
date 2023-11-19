@@ -4,17 +4,27 @@
     <title>Edventures</title>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css">
     <style>
+        /* Set the font for the entire body */
         body {
             font-family: Arial, sans-serif;
+            text-align: center; /* Center the content */
         }
+        /* Make the title bigger and add some space below it */
+        h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+        }
+        /* Style for the lesson container */
         .lesson-container {
             border: 1px solid #ccc;
             margin-bottom: 10px;
             padding: 10px;
         }
+        /* Style for the form container */
         .form-container {
             margin-top: 20px;
         }
+        /* Style for the rating system */
         .rating {
             direction: rtl;
         }
@@ -29,6 +39,25 @@
         .rating a.active ~ a {
             color: #fde16d;
         }
+        /* Style for the checkout button */
+        .checkout-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #4CAF50; /* Green */
+            border: none;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            transition-duration: 0.4s; /* Transition effect */
+            cursor: pointer;
+        }
+        .checkout-button:hover {
+            background-color: white;
+            color: black;
+            border: 2px solid #534caf;
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/vue@2.7.14/dist/vue.js"></script>
     <script src="lessons.js"></script>
@@ -36,6 +65,10 @@
 <body>
     <div id="app">
         <h1>Edventures</h1>
+        <!-- Checkout Button -->
+        <button class="checkout-button" v-on:click="showProduct = !showProduct">
+            <i class="fas fa-shopping-cart"></i> Checkout ({{ cart.length }})
+        </button>
         <!-- Display List of Lessons -->
         <div v-if="showProduct">
             <!-- Sort Functionality -->
@@ -60,6 +93,8 @@
             </div>
             <!-- Lessons List -->
             <div class="lesson-container" v-for="(lesson, index) in filteredAndSortedLessons">
+                <!-- Lesson Image -->
+                <img :src="lesson.image" alt="Lesson Image" style="max-width: 100%; max-height: 100px;">
                 <!-- Lesson Details -->
                 <h2>{{ lesson.subject }}</h2>
                 <p>Location: {{ lesson.location }}</p>
@@ -69,7 +104,7 @@
                 <button v-on:click="addToCart(lesson)" v-if="lesson.spaces > 0">
                     Add to cart
                 </button>
-                <p v-else>Oh no, we're all out of spaces at the moment. Please check back later.</p>
+                <p v-else>Oh no, we're all out of space for this activiyy at the moment. Please check back later.</p>
                 <!-- Rating System -->
                 <div class="rating">
                     <a href="#" v-on:click.prevent="rate(lesson, 5)" v-bind:class="{ active: lesson.rating >= 5 }">★</a>
@@ -100,15 +135,11 @@
                 <h2>Checkout</h2>
                 <p><strong>Name:</strong> <input v-model.trim="order.name" /></p>
                 <p><strong>Phone Number:</strong> <input v-model.trim="order.phone" /></p>
-                <button v-show="isValidName && isValidPhone" v-on:click="submitOrder">
+                <button v-if="isValidName && isValidPhone" v-on:click="submitOrder">
                     Place Order
                 </button>
             </div>
         </div>
-        <!-- Checkout Button -->
-        <button v-on:click="showProduct = !showProduct">
-            <i class="fas fa-shopping-cart"></i> Checkout ({{ cart.length }})
-        </button>
     </div>
     <script type="text/javascript">
         let app = new Vue({
@@ -124,13 +155,12 @@
                 sortAttribute: '',
                 sortOrder: '',
                 searchQuery: ''
-            },
-            computed: {
+            }, computed: {
                 isValidName: function () {
-                    return /^[A-Za-z]*$/.test(this.order.name);
+                    return this.order.name !== '' && /^[A-Za-z]*$/.test(this.order.name);
                 },
                 isValidPhone: function () {
-                    return /^[0-9]*$/.test(this.order.phone);
+                    return this.order.phone !== '' && /^[0-9]*$/.test(this.order.phone);
                 },
                 filteredAndSortedLessons: function () {
                     let lessonsArray = this.lessons;
