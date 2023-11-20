@@ -67,8 +67,8 @@
     <div id="app">
         <!-- Main title -->
         <h1>Edventures</h1>
-        <!-- Checkout button with a dynamic count of items in the cart -->
-        <button class="checkout-button" v-on:click="toggleProductView">
+        <!-- Checkout button with a dynamic count of items in the cart, visible only when there are items in the cart -->
+        <button v-if="cart.length > 0" class="checkout-button" v-on:click="toggleProductView">
             <i class="fas fa-shopping-cart"></i> Checkout ({{ cart.length }})
         </button>
         <!-- Vue conditional rendering: Show products if `showProduct` is true -->
